@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height:70vh;">
+    <div class="card shadow-lg p-4" style="max-width:400px; width:100%; border-radius:24px; border:3px solid #FFD600; background: #fffbe7;">
+        <div class="text-center mb-3">
+            <span class="fs-1">🔐</span>
+            <h2 class="mb-2" style="color:#D32F2F; font-weight:bold;">Login</h2>
+            <p class="mb-0" style="color:#388E3C;">Welcome back! Please sign in. <span class="fs-5">😊</span></p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label" style="color:#FFD600;"><i class="bi bi-person-circle"></i> Username</label>
+                {{ form.username|add_class:'form-control' }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="color:#FFD600;"><i class="bi bi-lock-fill"></i> Password</label>
+                {{ form.password|add_class:'form-control' }}
+            </div>
+            <button type="submit" class="btn btn-success w-100" style="background:#388E3C; border:none; border-radius:20px; font-weight:bold;">Login <i class="bi bi-box-arrow-in-right"></i></button>
+        </form>
+    </div>
+</div>
+{% endblock %}

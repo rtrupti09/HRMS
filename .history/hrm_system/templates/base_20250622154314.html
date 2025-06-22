@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HRM System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Header */
+        .hrm-header {
+            background: #1f1f1f;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #2c2c2c;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hrm-header h1 {
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .hrm-header p {
+            color: #b0b0b0;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        .hrm-footer {
+            background: #1f1f1f;
+            color: #a0a0a0;
+            text-align: center;
+            padding: 0.8rem 0;
+            border-top: 1px solid #2c2c2c;
+            font-size: 0.95rem;
+            margin-top: 2rem;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 0.5rem;
+        }
+
+        /* Buttons & Inputs */
+        .btn-dark-theme {
+            background-color: #292929;
+            color: #f5f5f5;
+            border: 1px solid #444;
+        }
+
+        .btn-dark-theme:hover {
+            background-color: #3a3a3a;
+            color: #fff;
+        }
+
+        input.form-control, select.form-control, textarea.form-control {
+            background-color: #2c2c2c;
+            color: #f5f5f5;
+            border: 1px solid #444;
+        }
+
+        input.form-control::placeholder {
+            color: #aaaaaa;
+        }
+
+        .container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Link styles */
+        a {
+            color: #87cefa;
+        }
+
+        a:hover {
+            color: #fff;
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="hrm-header text-center">
+        <h1><i class="bi bi-people-fill"></i> HRM System</h1>
+        <p>Manage your departments with style and ease! 🚀</p>
+    </div>
+
+    <!-- Page Content -->
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <div class="hrm-footer">
+        Made with ❤️ for your HR needs &copy; {{ now|date:'Y' }} | <i class="bi bi-emoji-smile"></i>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

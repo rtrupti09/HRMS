@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+    .dark-card {
+        background: #1e1e1e;
+        border: 1px solid #2c2c2c;
+    }
+    .btn-dark-theme {
+        background-color: #292929;
+        color: #f5f5f5;
+        border: 1px solid #444;
+    }
+    .btn-dark-theme:hover {
+        background-color: #3a3a3a;
+        color: #fff;
+    }
+    .table-dark-custom thead {
+        background-color: #2a2a2a;
+        color: #e0e0e0;
+    }
+    .table-dark-custom tbody tr:hover {
+        background-color: #2f2f2f;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center">
+            <h2 class="me-2 fw-bold" style="color: #f0f0f0;">Department Dashboard</h2>
+            <span class="fs-2">🏢</span>
+        </div>
+        <a href="{% url 'add_department' %}" class="btn btn-dark-theme rounded-pill shadow-sm">
+            <i class="bi bi-plus-circle"></i> Add Department
+        </a>
+    </div>
+
+    <!-- Search -->
+    <form method="get" class="d-flex mb-4" style="max-width: 500px;">
+        <input type="text" name="search" value="{{ search }}" placeholder="Search by name or description..." class="form-control me-2 rounded-pill" style="background-color: #2a2a2a; color: #f5f5f5; border: 1px solid #444;">
+        <button type="submit" class="btn btn-dark-theme rounded-pill">
+            <i class="bi bi-search"></i>
+        </button>
+    </form>
+
+    <!-- Table -->
+    <div class="table-responsive rounded dark-card shadow-sm p-2">
+        <table class="table table-dark-custom table-hover align-middle mb-0 table-borderless">
+            <thead>
+                <tr class="text-center">
+                    <th>#</th>
+                    <th><i class="bi bi-building"></i> Name</th>
+                    <th><i class="bi bi-card-text"></i> Description</th>
+                    <th><i class="bi bi-check-circle"></i> Status</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept in departments %}
+                <tr class="text-center border-bottom border-dark">
+                    <td>{{ forloop.counter }}</td>
+                    <td class="fw-semibold text-light text-capitalize">{{ dept.dept_name }}</td>
+                    <td class="text-muted">{{ dept.description }}</td>
+                    <td>
+                        {% if dept.status %}
+                            <span class="badge bg-success px-3 py-2 rounded-pill">Active ✅</span>
+                        {% else %}
+                            <span class="badge bg-danger px-3 py-2 rounded-pill">Inactive ❌</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_department' dept.id %}" class="btn btn-sm btn-outline-warning rounded-pill me-1">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_department' dept.id %}" class="btn btn-sm btn-outline-danger rounded-pill">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">😕 No departments found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

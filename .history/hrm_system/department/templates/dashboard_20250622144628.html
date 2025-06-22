@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <h2>Department Dashboard</h2>
+    <form method="get" class="mb-3">
+        <input type="text" name="search" placeholder="Search..." class="form-control">
+    </form>
+    <a href="{% url 'add_department' %}" class="btn btn-primary mb-3">Add Department</a>
+    <table class="table table-bordered">
+        <thead class="table-light"><tr>
+            <th>#</th><th>Name</th><th>Description</th><th>Status</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+            {% for dept in departments %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ dept.dept_name }}</td>
+                <td>{{ dept.description }}</td>
+                <td>{{ dept.status|yesno:"Active,Inactive" }}</td>
+                <td>
+                    <a href="{% url 'edit_department' dept.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'delete_department' dept.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No departments found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

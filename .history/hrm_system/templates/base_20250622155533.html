@@ -1,0 +1,57 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HRM System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .hrm-header {
+            background: #19191a;
+            color: #fff;
+            padding: 1.2rem 0 1rem 0;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 2px 8px rgba(75,0,130,0.08);
+            margin-bottom: 2rem;
+        }
+        .hrm-footer {
+            background: #171717;
+            color: #fff;
+            text-align: center;
+            padding: 0.7rem 0;
+            border-radius: 24px 24px 0 0;
+            margin-top: 2rem;
+            font-size: 1rem;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="hrm-header text-center">
+        <h1 style="font-weight:bold; letter-spacing:1px;"><i class="bi bi-people-fill"></i> HRM System</h1>
+        <p class="mb-0">🌟Manage your departments with style and ease! 🚀</p>
+    </div>
+    <div class="container pt-3">
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+    <div class="hrm-footer">
+        <span>Made with ❤️ for your HR needs &copy; {{ now|date:'Y' }} | <i class="bi bi-emoji-smile"></i></span>
+    </div>
+</body>
+</html>
