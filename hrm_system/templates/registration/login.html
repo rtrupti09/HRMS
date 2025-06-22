@@ -1,23 +1,36 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height:70vh;">
-    <div class="card shadow-lg p-4" style="max-width:400px; width:100%; border-radius:24px; border:3px solid #FFD600; background: #fffbe7;">
-        <div class="text-center mb-3">
-            <span class="fs-1">🔐</span>
-            <h2 class="mb-2" style="color:#D32F2F; font-weight:bold;">Login</h2>
-            <p class="mb-0" style="color:#388E3C;">Welcome back! Please sign in. <span class="fs-5">😊</span></p>
+<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 24px; border: 2px solid #212121; background: #f9f9f9;">
+        <div class="text-center mb-4">
+            <h2 class="mb-2" style="color:#000; font-weight:bold;">Login</h2>
+            <p class="mb-0 text-muted">Welcome back! Please sign in</p>
         </div>
-        <form method="post">
+        <form method="post" novalidate>
             {% csrf_token %}
+            <!-- Username -->
             <div class="mb-3">
-                <label class="form-label" style="color:#FFD600;"><i class="bi bi-person-circle"></i> Username</label>
-                {{ form.username|add_class:'form-control' }}
+                <label for="id_username" class="form-label text-dark"><i class="bi bi-person-circle me-1"></i> Username</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white text-secondary"><i class="bi bi-person"></i></span>
+                    <input type="text" name="username" id="id_username" class="form-control border-secondary" placeholder="Enter your username" required>
+                </div>
             </div>
+
+            <!-- Password -->
             <div class="mb-3">
-                <label class="form-label" style="color:#FFD600;"><i class="bi bi-lock-fill"></i> Password</label>
-                {{ form.password|add_class:'form-control' }}
+                <label for="id_password" class="form-label text-dark"><i class="bi bi-lock-fill me-1"></i> Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white text-secondary"><i class="bi bi-shield-lock"></i></span>
+                    <input type="password" name="password" id="id_password" class="form-control border-secondary" placeholder="Enter your password" required>
+                </div>
             </div>
-            <button type="submit" class="btn btn-success w-100" style="background:#388E3C; border:none; border-radius:20px; font-weight:bold;">Login <i class="bi bi-box-arrow-in-right"></i></button>
+
+            <!-- Submit -->
+            <button type="submit" class="btn w-100 mt-3" style="background:#212121; border:none; border-radius: 20px; font-weight: bold; color: white;">
+                Login <i class="bi bi-box-arrow-in-right ms-1"></i>
+            </button>
         </form>
     </div>
 </div>

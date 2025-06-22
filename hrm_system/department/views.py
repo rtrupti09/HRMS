@@ -3,6 +3,7 @@ from .models import Department
 from .forms import DepartmentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import logout
 
 def admin_required(view_func):
     return user_passes_test(lambda u: u.is_superuser)(view_func)
@@ -53,3 +54,7 @@ def delete_department(request, dept_id):
         messages.warning(request, "Department deactivated. Reassign employees before deletion.")
         return redirect('department_dashboard')
     return render(request, "department/confirm_delete.html", {"department": department})
+
+def custom_logout(request):
+    logout(request)
+    return redirect('/accounts/login/')
