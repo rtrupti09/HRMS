@@ -4,21 +4,25 @@
 {% endblock %}
 {% block content %}
 <div class="container py-5">
-  <div class="d-flex align-items-center justify-content-between mb-4">
-    <div class="d-flex align-items-center gap-2">
-        <span class="fs-1">🧑‍💼</span>
-        <h2 class="text-dark fw-bold mb-0">Role Dashboard</h2>
+    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4 px-3">
+        <div class="d-flex align-items-center gap-2 mb-2 mb-md-0">
+          <span class="fs-1">🧑‍💼</span>
+          <h2 class="text-dark fw-bold mb-0">Role Dashboard</h2>
+        </div>
+      
+        <div class="d-flex flex-column flex-sm-row gap-2">
+          <a href="{% url 'add_department' %}" class="btn btn-dark shadow-sm" style="border-radius: 30px;">
+            <i class="bi bi-plus-circle"></i> Add Department
+          </a>
+          <a href="{% url 'add_role' %}" class="btn btn-dark shadow-sm" style="border-radius: 30px;">
+            <i class="bi bi-plus-circle"></i> Create Role
+          </a>
+          <a href="{% url 'custom_logout' %}" class="btn btn-outline-dark shadow-sm" style="border-radius: 30px;">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </div>
       </div>
       
-    <div>
-      <a href="{% url 'add_role' %}" class="btn btn-dark shadow-sm me-2" style="border-radius: 30px">
-        <i class="bi bi-plus-circle"></i> Create Role
-      </a>
-      <a href="{% url 'custom_logout' %}" class="btn btn-outline-dark shadow-sm" style="border-radius: 30px">
-        <i class="bi bi-box-arrow-right"></i> Logout
-      </a>
-    </div>
-  </div>
   <form method="get" class="input-group mb-4 shadow-sm" style="max-width: 500px">
     <input type="text" name="search" value="{{ search }}" class="form-control px-4 py-2 border-end-0" placeholder="Search by name..." style="font-size: 1rem"/>
     <button class="btn btn-dark border-start-0" type="submit">
@@ -39,23 +43,25 @@
       <tbody>
         {% for role in roles %}
         <tr class="text-center">
-          <td>{{ forloop.counter }}</td>
-          <td class="fw-semibold text-capitalize text-dark">{{ role.role_name }}</td>
-          <td class="text-muted">{{ role.description }}</td>
-          <td>
+          <td class="align-middle">{{ forloop.counter }}</td>
+          <td class="fw-semibold text-capitalize text-dark align-middle text-break">{{ role.role_name }}</td>
+          <td class="text-muted align-middle text-break">{{ role.description }}</td>
+          <td class="align-middle">
             {% if role.status %}
             <span class="badge bg-success px-3 py-2 rounded-pill">Active</span>
             {% else %}
             <span class="badge bg-danger px-3 py-2 rounded-pill">Inactive</span>
             {% endif %}
           </td>
-          <td>
-            <a href="{% url 'edit_role' role.role_id %}" class="btn btn-sm btn-outline-dark rounded-pill me-1">
-              <i class="bi bi-pencil-square"></i>
-            </a>
-            <a href="{% url 'delete_role' role.role_id %}" class="btn btn-sm btn-outline-danger rounded-pill">
-              <i class="bi bi-trash"></i>
-            </a>
+          <td class="align-middle">
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-1">
+              <a href="{% url 'edit_role' role.role_id %}" class="btn btn-sm btn-outline-dark rounded-pill">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+              <a href="{% url 'delete_role' role.role_id %}" class="btn btn-sm btn-outline-danger rounded-pill">
+                <i class="bi bi-trash"></i>
+              </a>
+            </div>
           </td>
         </tr>
         {% empty %}
