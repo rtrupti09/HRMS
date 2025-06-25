@@ -7,4 +7,8 @@ urlpatterns = [
     path('edit/<int:dept_id>/', views.edit_department, name='edit_department'),
     path('delete/<int:dept_id>/', views.delete_department, name='delete_department'),
     path('logout/', views.custom_logout, name='custom_logout'),
+    path('roles/', views.role_dashboard, name='role_dashboard'),
+    path('roles/add/', views.add_role, name='add_role'),
+    path('roles/edit/<int:role_id>/', views.edit_role, name='edit_role'),
+    path('roles/delete/<int:role_id>/', views.delete_role, name='delete_role'),
 ]

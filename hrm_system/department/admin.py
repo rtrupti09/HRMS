@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Department
+from .models import Department, Role
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
@@ -8,3 +8,5 @@ class DepartmentAdmin(admin.ModelAdmin):
     search_fields = ('dept_name', 'description')
     ordering = ('-created_at',)
     list_per_page = 10
+
+admin.site.register(Role)
