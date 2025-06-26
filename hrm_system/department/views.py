@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Department, Role
-from .forms import DepartmentForm, RoleForm
+from .models import Department, Role, Employee
+from .forms import DepartmentForm, RoleForm, EmployeeForm
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import logout
+from django.contrib.auth.hashers import make_password
 
 def admin_required(view_func):
     return user_passes_test(lambda u: u.is_superuser)(view_func)
@@ -105,3 +106,60 @@ def delete_role(request, role_id):
 def custom_logout(request):
     logout(request)
     return redirect('/accounts/login/')
+
+def is_admin_or_hr(user):
+    return user.is_superuser or (hasattr(user, 'employee') and user.employee.role and user.employee.role.role_name.lower() == 'hr')
+
+employee_required = user_passes_test(is_admin_or_hr)
+
+@employee_required
+def employee_dashboard(request):
+    employees = Employee.objects.all()
+    query = request.GET.get("search", "")
+    if query:
+        employees = employees.filter(
+            first_name__icontains=query
+        ) | employees.filter(
+            last_name__icontains=query
+        ) | employees.filter(
+            username__icontains=query
+        )
+    return render(request, "employee/dashboard.html", {"employees": employees, "search": query})
+
+@employee_required
+def add_employee(request):
+    if request.method == "POST":
+        form = EmployeeForm(request.POST)
+        if form.is_valid():
+            employee = form.save(commit=False)
+            # Hash password securely
+            if form.cleaned_data['password']:
+                employee.password = make_password(form.cleaned_data['password'])
+            employee.save()
+            messages.success(request, "Employee added successfully.")
+            return redirect('employee_dashboard')
+    else:
+        form = EmployeeForm()
+    return render(request, "employee/add_edit.html", {"form": form})
+
+@employee_required
+def edit_employee(request, employee_id):
+    employee = get_object_or_404(Employee, pk=employee_id)
+    if request.method == "POST":
+        form = EmployeeForm(request.POST, instance=employee)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Employee updated successfully.")
+            return redirect('employee_dashboard')
+    else:
+        form = EmployeeForm(instance=employee)
+    return render(request, "employee/add_edit.html", {"form": form, "employee": employee})
+
+@employee_required
+def delete_employee(request, employee_id):
+    employee = get_object_or_404(Employee, pk=employee_id)
+    if request.method == "POST":
+        employee.delete()
+        messages.warning(request, "Employee deleted.")
+        return redirect('employee_dashboard')
+    return render(request, "employee/confirm_delete.html", {"employee": employee})

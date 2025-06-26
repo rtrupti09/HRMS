@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-dark text-white rounded-top-4">
+          <h4 class="mb-0 text-center">
+            {% if employee %}Edit Employee{% else %}Add Employee{% endif %}
+          </h4>
+        </div>
+        <div class="card-body p-4">
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <!-- Name Group -->
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">First Name</label>
+                {{ form.first_name|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.first_name.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.first_name.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Last Name</label>
+                {{ form.last_name|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.last_name.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.last_name.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            <!-- Username/Password Group -->
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Username</label>
+                {{ form.username|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.username.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.username.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Password</label>
+                {{ form.password|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.password.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.password.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            <!-- Contact Group -->
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Email</label>
+                {{ form.email|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.email.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.email.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.mobile.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Mobile</label>
+                {{ form.mobile|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.mobile.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.mobile.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            <!-- Assignment Group -->
+            <div class="row g-2 mb-2">
+              <div class="col-md-4">
+                <label for="{{ form.dept.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Department</label>
+                {{ form.dept|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.dept.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.dept.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ form.role.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Role</label>
+                {{ form.role|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.role.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.role.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ form.reporting_manager.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Reporting Manager</label>
+                {{ form.reporting_manager|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+                {% if form.reporting_manager.errors %}
+                <div class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> {{ form.reporting_manager.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            <!-- Date of Joining -->
+            <div class="mb-2">
+              <label for="{{ form.date_of_joining.id_for_label }}" class="form-label fw-semibold text-dark small text-uppercase">Date of Joining</label>
+              {{ form.date_of_joining|add_class:"form-control form-control-sm shadow-sm rounded-3" }}
+              {% if form.date_of_joining.errors %}
+              <div class="text-danger small mt-1">
+                <i class="bi bi-exclamation-circle me-1"></i> {{ form.date_of_joining.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="d-flex justify-content-between mt-3">
+              <a href="{% url 'employee_dashboard' %}" class="btn btn-outline-dark px-4 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-arrow-left-circle me-1"></i> Cancel
+              </a>
+              <button type="submit" class="btn btn-dark px-4 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-check2-circle me-1"></i> {% if employee %}Update{% else %}Add{% endif %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
