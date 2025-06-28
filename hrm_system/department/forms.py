@@ -47,3 +47,94 @@ class EmployeeForm(forms.ModelForm):
         if self.instance.pk and reporting_manager and reporting_manager.pk == self.instance.pk:
             self.add_error('reporting_manager', 'An employee cannot be their own reporting manager.')
         return cleaned_data
+
+class EmployeeSignupForm(forms.ModelForm):
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm your password'}),
+        label='Confirm Password'
+    )
+    
+    class Meta:
+        model = Employee
+        fields = ['first_name', 'last_name', 'email', 'username', 'password']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email address'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Choose a unique username'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Choose a password'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError('Passwords do not match.')
+        
+        return cleaned_data
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if Employee.objects.filter(username=username).exists():
+            raise forms.ValidationError('This username is already taken.')
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if Employee.objects.filter(email=email).exists():
+            raise forms.ValidationError('This email is already registered.')
+        return email
+
+class AdminLoginForm(forms.Form):
+    username = forms.CharField(
+        max_length=100, 
+        label='Username',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter admin username'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter admin password'}), 
+        label='Password'
+    )
+
+class EmployeeLoginForm(forms.Form):
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter your password'}), 
+        label='Password'
+    )
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(
+        label='Registered Email',
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email address'})
+    )
+
+class OTPVerificationForm(forms.Form):
+    otp = forms.CharField(
+        max_length=6, 
+        label='OTP',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter 6-digit OTP', 'maxlength': '6'})
+    )
+
+class SetNewPasswordForm(forms.Form):
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter new password'}), 
+        label='New Password'
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm new password'}), 
+        label='Confirm Password'
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        confirm_password = cleaned_data.get('confirm_password')
+        if new_password and confirm_password and new_password != confirm_password:
+            raise forms.ValidationError('Passwords do not match.')
+        return cleaned_data

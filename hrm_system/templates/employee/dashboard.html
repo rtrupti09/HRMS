@@ -10,72 +10,115 @@
       <span class="fs-2"></span>
     </div>
     <div>
-      <a href="{% url 'add_employee' %}" class="btn btn-dark shadow-sm me-2" style="border-radius: 30px">
-        <i class="bi bi-plus-circle"></i> Add Employee
-      </a>
-      <a href="{% url 'department_dashboard' %}" class="btn btn-outline-dark shadow-sm me-2" style="border-radius: 30px">
-        <i class="bi bi-building"></i> Departments
-      </a>
-      <a href="{% url 'role_dashboard' %}" class="btn btn-outline-dark shadow-sm me-2" style="border-radius: 30px">
-        <i class="bi bi-person-badge"></i> Roles
-      </a>
+      {% if user.is_authenticated and user.is_superuser %}
+        <a href="{% url 'add_employee' %}" class="btn btn-dark shadow-sm me-2" style="border-radius: 30px">
+          <i class="bi bi-plus-circle"></i> Add Employee
+        </a>
+        <a href="{% url 'department_dashboard' %}" class="btn btn-outline-dark shadow-sm me-2" style="border-radius: 30px">
+          <i class="bi bi-building"></i> Departments
+        </a>
+        <a href="{% url 'role_dashboard' %}" class="btn btn-outline-dark shadow-sm me-2" style="border-radius: 30px">
+          <i class="bi bi-person-badge"></i> Roles
+        </a>
+      {% endif %}
       <a href="{% url 'custom_logout' %}" class="btn btn-outline-dark shadow-sm" style="border-radius: 30px">
         <i class="bi bi-box-arrow-right"></i> Logout
       </a>
     </div>
   </div>
-  <form method="get" class="input-group mb-4 shadow-sm" style="max-width: 500px">
-    <input type="text" name="search" value="{{ search }}" class="form-control px-4 py-2 border-end-0" placeholder="Search by name, username..." style="font-size: 1rem"/>
-    <button class="btn btn-dark border-start-0" type="submit">
-      <i class="bi bi-search fs-5"></i>
-    </button>
-  </form>
-  <div class="table-responsive rounded shadow-sm">
-    <table class="table table-bordered table-hover align-middle mb-0" style="background-color: #ffffff">
-      <thead class="table-light">
-        <tr class="text-center">
-          <th>#</th>
-          <th><i class="bi bi-person"></i> Name</th>
-          <th><i class="bi bi-person-badge"></i> Username</th>
-          <th><i class="bi bi-envelope"></i> Email</th>
-          <th><i class="bi bi-phone"></i> Mobile</th>
-          <th><i class="bi bi-building"></i> Department</th>
-          <th><i class="bi bi-person-vcard"></i> Role</th>
-          <th><i class="bi bi-person-lines-fill"></i> Reporting Manager</th>
-          <th><i class="bi bi-calendar-check"></i> Date of Joining</th>
-          <th><i class="bi bi-gear"></i> Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for employee in employees %}
-        <tr class="text-center">
-          <td>{{ forloop.counter }}</td>
-          <td class="fw-semibold text-capitalize text-dark">{{ employee.first_name }} {{ employee.last_name }}</td>
-          <td>{{ employee.username }}</td>
-          <td>{{ employee.email }}</td>
-          <td>{{ employee.mobile }}</td>
-          <td>{{ employee.dept }}</td>
-          <td>{{ employee.role }}</td>
-          <td>{% if employee.reporting_manager %}{{ employee.reporting_manager.first_name }} {{ employee.reporting_manager.last_name }}{% endif %}</td>
-          <td>{{ employee.date_of_joining }}</td>
-          <td>
-            <a href="{% url 'edit_employee' employee.employee_id %}" class="btn btn-sm btn-outline-dark rounded-pill me-1">
-              <i class="bi bi-pencil-square"></i>
-            </a>
-            <a href="{% url 'delete_employee' employee.employee_id %}" class="btn btn-sm btn-outline-danger rounded-pill">
-              <i class="bi bi-trash"></i>
-            </a>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="10" class="text-center text-muted py-4">
-            😕 No employees found.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  
+  {% if user.is_authenticated and user.is_superuser %}
+    <!-- Admin view - show all employees -->
+    <form method="get" class="input-group mb-4 shadow-sm" style="max-width: 500px">
+      <input type="text" name="search" value="{{ search }}" class="form-control px-4 py-2 border-end-0" placeholder="Search by name, username..." style="font-size: 1rem"/>
+      <button class="btn btn-dark border-start-0" type="submit">
+        <i class="bi bi-search fs-5"></i>
+      </button>
+    </form>
+    <div class="table-responsive rounded shadow-sm">
+      <table class="table table-bordered table-hover align-middle mb-0" style="background-color: #ffffff">
+        <thead class="table-light">
+          <tr class="text-center">
+            <th>#</th>
+            <th><i class="bi bi-person"></i> Name</th>
+            <th><i class="bi bi-person-badge"></i> Username</th>
+            <th><i class="bi bi-envelope"></i> Email</th>
+            <th><i class="bi bi-phone"></i> Mobile</th>
+            <th><i class="bi bi-building"></i> Department</th>
+            <th><i class="bi bi-person-vcard"></i> Role</th>
+            <th><i class="bi bi-person-lines-fill"></i> Reporting Manager</th>
+            <th><i class="bi bi-calendar-check"></i> Date of Joining</th>
+            <th><i class="bi bi-gear"></i> Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for employee in employees %}
+          <tr class="text-center">
+            <td>{{ forloop.counter }}</td>
+            <td class="fw-semibold text-capitalize text-dark">{{ employee.first_name }} {{ employee.last_name }}</td>
+            <td>{{ employee.username }}</td>
+            <td>{{ employee.email }}</td>
+            <td>{{ employee.mobile }}</td>
+            <td>{{ employee.dept }}</td>
+            <td>{{ employee.role }}</td>
+            <td>{% if employee.reporting_manager %}{{ employee.reporting_manager.first_name }} {{ employee.reporting_manager.last_name }}{% endif %}</td>
+            <td>{{ employee.date_of_joining }}</td>
+            <td>
+              <a href="{% url 'edit_employee' employee.employee_id %}" class="btn btn-sm btn-outline-dark rounded-pill me-1">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+              <a href="{% url 'delete_employee' employee.employee_id %}" class="btn btn-sm btn-outline-danger rounded-pill">
+                <i class="bi bi-trash"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="10" class="text-center text-muted py-4">
+              😕 No employees found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <!-- Employee view - show only current employee info -->
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow">
+          <div class="card-header bg-success text-white text-center">
+            <h4><i class="bi bi-person-circle"></i> My Profile</h4>
+          </div>
+          <div class="card-body">
+            {% if current_employee %}
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Name:</strong> {{ current_employee.first_name }} {{ current_employee.last_name }}</p>
+                <p><strong>Username:</strong> {{ current_employee.username }}</p>
+                <p><strong>Email:</strong> {{ current_employee.email }}</p>
+                <p><strong>Mobile:</strong> {{ current_employee.mobile }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Department:</strong> {{ current_employee.dept|default:"Not assigned" }}</p>
+                <p><strong>Role:</strong> {{ current_employee.role|default:"Not assigned" }}</p>
+                <p><strong>Date of Joining:</strong> {{ current_employee.date_of_joining }}</p>
+                <p><strong>Reporting Manager:</strong> 
+                  {% if current_employee.reporting_manager %}
+                    {{ current_employee.reporting_manager.first_name }} {{ current_employee.reporting_manager.last_name }}
+                  {% else %}
+                    Not assigned
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">Employee information not found.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
 </div>
 {% endblock %} 

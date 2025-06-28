@@ -15,4 +15,11 @@ urlpatterns = [
     path('employees/add/', views.add_employee, name='add_employee'),
     path('employees/edit/<int:employee_id>/', views.edit_employee, name='edit_employee'),
     path('employees/delete/<int:employee_id>/', views.delete_employee, name='delete_employee'),
+    path('admin-login/', views.admin_login, name='admin_login'),
+    path('employee-login/', views.employee_login, name='employee_login'),
+    path('signup/', views.employee_signup, name='employee_signup'),
+    path('logout/', views.employee_logout, name='employee_logout'),
+    path('password-reset/', views.password_reset_request, name='password_reset_request'),
+    path('password-reset/otp/', views.password_reset_otp, name='password_reset_otp'),
+    path('password-reset/new/', views.password_reset_new, name='password_reset_new'),
 ]
