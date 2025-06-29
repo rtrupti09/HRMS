@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 mb-4" >
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-star-fill"></i> {{ title }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.review_title.id_for_label }}" class="form-label">
+                                <i class="bi bi-pencil"></i> Review Title
+                            </label>
+                            {{ form.review_title }}
+                            {% if form.review_title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.review_title.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.review_date.id_for_label }}" class="form-label">
+                                <i class="bi bi-calendar"></i> Review Date
+                            </label>
+                            {{ form.review_date }}
+                            {% if form.review_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.review_date.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.employee.id_for_label }}" class="form-label">
+                                <i class="bi bi-person"></i> Employee
+                            </label>
+                            {{ form.employee }}
+                            {% if form.employee.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.employee.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Select the employee to be reviewed
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.review_period.id_for_label }}" class="form-label">
+                                <i class="bi bi-clock"></i> Review Period
+                            </label>
+                            {{ form.review_period }}
+                            {% if form.review_period.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.review_period.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.rating.id_for_label }}" class="form-label">
+                                <i class="bi bi-star"></i> Rating (1-10)
+                            </label>
+                            {{ form.rating }}
+                            {% if form.rating.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.rating.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Rate employee performance from 1 (Poor) to 10 (Excellent)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.comments.id_for_label }}" class="form-label">
+                            <i class="bi bi-chat-text"></i> Comments
+                        </label>
+                        {{ form.comments }}
+                        {% if form.comments.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.comments.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <i class="bi bi-info-circle"></i> Provide detailed feedback and comments about the employee's performance
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'review_dashboard' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Reviews
+                        </a>
+                        <button type="submit" class="btn btn-dark">
+                            <i class="bi bi-check-circle"></i> Save Review
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #000000;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+</style>
+
+<script>
+// Add star rating visualization
+document.addEventListener('DOMContentLoaded', function() {
+    const ratingInput = document.getElementById('{{ form.rating.id_for_label }}');
+    const ratingContainer = ratingInput.parentElement;
+    
+    // Create star display
+    const starDisplay = document.createElement('div');
+    starDisplay.className = 'mt-2';
+    starDisplay.innerHTML = `
+        <div class="stars-display">
+            <i class="bi bi-star" data-rating="1"></i>
+            <i class="bi bi-star" data-rating="2"></i>
+            <i class="bi bi-star" data-rating="3"></i>
+            <i class="bi bi-star" data-rating="4"></i>
+            <i class="bi bi-star" data-rating="5"></i>
+            <i class="bi bi-star" data-rating="6"></i>
+            <i class="bi bi-star" data-rating="7"></i>
+            <i class="bi bi-star" data-rating="8"></i>
+            <i class="bi bi-star" data-rating="9"></i>
+            <i class="bi bi-star" data-rating="10"></i>
+        </div>
+    `;
+    ratingContainer.appendChild(starDisplay);
+    
+    const stars = starDisplay.querySelectorAll('.bi-star');
+    
+    // Update stars when input changes
+    function updateStars() {
+        const rating = parseInt(ratingInput.value) || 0;
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.className = 'bi bi-star-fill text-warning';
+            } else {
+                star.className = 'bi bi-star text-muted';
+            }
+        });
+    }
+    
+    // Click to set rating
+    stars.forEach((star, index) => {
+        star.addEventListener('click', function() {
+            ratingInput.value = index + 1;
+            updateStars();
+        });
+        
+        star.addEventListener('mouseenter', function() {
+            const rating = index + 1;
+            stars.forEach((s, i) => {
+                if (i < rating) {
+                    s.className = 'bi bi-star-fill text-warning';
+                } else {
+                    s.className = 'bi bi-star text-muted';
+                }
+            });
+        });
+        
+        star.addEventListener('mouseleave', updateStars);
+    });
+    
+    // Initial update
+    updateStars();
+    
+    // Listen for input changes
+    ratingInput.addEventListener('input', updateStars);
+});
+</script>
+{% endblock %} 

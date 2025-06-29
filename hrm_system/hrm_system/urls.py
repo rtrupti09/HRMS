@@ -24,6 +24,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('departments/', include('department.urls')),
     path('accounts/', include('django.contrib.auth.urls')), 
-    path('', lambda request: redirect('department_dashboard')),
+    # Authentication routes - direct access
+    path('login/', include('department.urls')),
+    path('signup/', include('department.urls')),
+    path('password-reset/', include('department.urls')),
+    path('', lambda request: redirect('admin_login')),
 ]
 

@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-info text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-check"></i> My Performance Reviews
+                    </h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Filter Form -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <form method="get" class="row g-3">
+                            <div class="col-md-4">
+                                {{ filter_form.review_period.label_tag }}
+                                {{ filter_form.review_period }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ filter_form.start_date.label_tag }}
+                                {{ filter_form.start_date }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ filter_form.end_date.label_tag }}
+                                {{ filter_form.end_date }}
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-info me-2">
+                                    <i class="bi bi-search"></i> Filter
+                                </button>
+                                <a href="{% url 'review_dashboard' %}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Total Reviews</h5>
+                                <h3>{{ total_reviews }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Average Rating</h5>
+                                <h3>
+                                    {% if page_obj %}
+                                        {% with total_rating=0 %}
+                                            {% for review in page_obj %}
+                                                {% with total_rating=total_rating|add:review.rating %}{% endwith %}
+                                            {% endfor %}
+                                            {{ total_rating|floatformat:1 }}
+                                        {% endwith %}
+                                    {% else %}
+                                        0.0
+                                    {% endif %}
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Latest Review</h5>
+                                <h3>{{ page_obj.first.review_date|date:"M Y"|default:"N/A" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-info">
+                            <tr>
+                                <th>Review Title</th>
+                                <th>Review Date</th>
+                                <th>Period</th>
+                                <th>Rating</th>
+                                <th>Reviewed By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for review in page_obj %}
+                            <tr>
+                                <td>
+                                    <strong>{{ review.review_title }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ review.comments|truncatechars:50 }}</small>
+                                </td>
+                                <td>{{ review.review_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="badge bg-{% if review.review_period == 'Monthly' %}primary{% elif review.review_period == 'Quarterly' %}warning{% else %}success{% endif %}">
+                                        {{ review.review_period }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="stars me-2">
+                                            {% for i in "12345678910" %}
+                                                {% if forloop.counter <= review.rating %}
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                {% else %}
+                                                    <i class="bi bi-star text-muted"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <span class="badge bg-primary">{{ review.rating }}/10</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2">
+                                            <span class="text-white fw-bold">{{ review.reviewed_by.first_name|first }}{{ review.reviewed_by.last_name|first }}</span>
+                                        </div>
+                                        <div>
+                                            <strong>{{ review.reviewed_by.first_name }} {{ review.reviewed_by.last_name }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ review.reviewed_by.role.role_name|default:"No Role" }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{% url 'review_detail' review.review_id %}" class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox display-4"></i>
+                                        <p class="mt-2">No performance reviews found for you yet.</p>
+                                        <p class="small">Your manager will create reviews for you periodically.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Review pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if request.GET.review_period %}&review_period={{ request.GET.review_period }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.review_period %}&review_period={{ request.GET.review_period }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if request.GET.review_period %}&review_period={{ request.GET.review_period }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.review_period %}&review_period={{ request.GET.review_period }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.review_period %}&review_period={{ request.GET.review_period }}{% endif %}{% if request.GET.start_date %}&start_date={{ request.GET.start_date }}{% endif %}{% if request.GET.end_date %}&end_date={{ request.GET.end_date }}{% endif %}">
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
+}
+
+.stars {
+    font-size: 12px;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.btn {
+    border-radius: 8px;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Registration{% endblock %}
+
+{% block extra_head %}
+<style>
+  .signup-container {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  
+  .signup-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 2px solid #212121;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    padding: 2rem;
+  }
+  
+  .signup-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .signup-header h2 {
+    color: #212121;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  
+  .signup-header p {
+    color: #666;
+    margin: 0;
+  }
+  
+  .form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: #212121;
+    box-shadow: 0 0 0 0.2rem rgba(33, 33, 33, 0.25);
+  }
+  
+  .btn-signup {
+    background: #212121;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: white;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  
+  .btn-signup:hover {
+    background: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .link-section {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .link-section a {
+    color: #212121;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .link-section a:hover {
+    color: #000;
+    text-decoration: underline;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .text-danger {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  
+  .row {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+  }
+  
+  .col-md-6 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="signup-container ">
+  <div class="signup-card">
+    <div class="signup-header">
+      <h2><i class="bi bi-person-plus"></i> Employee Registration</h2>
+      <p>Join our team! Create your account to get started</p>
+    </div>
+    
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-triangle"></i> {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+    
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+              <i class="bi bi-person me-1"></i> First Name
+            </label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+              <div class="text-danger">
+                <i class="bi bi-exclamation-circle"></i> {{ form.first_name.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+              <i class="bi bi-person me-1"></i> Last Name
+            </label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+              <div class="text-danger">
+                <i class="bi bi-exclamation-circle"></i> {{ form.last_name.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-3">
+        <label for="{{ form.email.id_for_label }}" class="form-label">
+          <i class="bi bi-envelope me-1"></i> Email Address
+        </label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="text-danger">
+            <i class="bi bi-exclamation-circle"></i> {{ form.email.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="mb-3">
+        <label for="{{ form.username.id_for_label }}" class="form-label">
+          <i class="bi bi-person-badge me-1"></i> Username
+        </label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <div class="text-danger">
+            <i class="bi bi-exclamation-circle"></i> {{ form.username.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="{{ form.mobile.id_for_label }}" class="form-label">
+              <i class="bi bi-phone me-1"></i> Mobile Number
+            </label>
+            {{ form.mobile }}
+            {% if form.mobile.errors %}
+              <div class="text-danger">
+                <i class="bi bi-exclamation-circle"></i> {{ form.mobile.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="{{ form.date_of_joining.id_for_label }}" class="form-label">
+              <i class="bi bi-calendar me-1"></i> Date of Joining
+            </label>
+            {{ form.date_of_joining }}
+            {% if form.date_of_joining.errors %}
+              <div class="text-danger">
+                <i class="bi bi-exclamation-circle"></i> {{ form.date_of_joining.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <label for="{{ form.password.id_for_label }}" class="form-label">
+              <i class="bi bi-lock me-1"></i> Password
+            </label>
+            {{ form.password }}
+            {% if form.password.errors %}
+              <div class="text-danger">
+                <i class="bi bi-exclamation-circle"></i> {{ form.password.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-4">
+            <label for="{{ form.confirm_password.id_for_label }}" class="form-label">
+              <i class="bi bi-lock-fill me-1"></i> Confirm Password
+            </label>
+            {{ form.confirm_password }}
+            {% if form.confirm_password.errors %}
+              <div class="text-danger">
+                <i class="bi bi-exclamation-circle"></i> {{ form.confirm_password.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn btn-signup">
+        <i class="bi bi-person-plus me-2"></i> Create Account
+      </button>
+    </form>
+    
+    <div class="link-section">
+      <p class="mb-0">Already have an account? 
+        <a href="{% url 'employee_login' %}">
+          <i class="bi bi-box-arrow-in-right"></i> Login here
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %} 

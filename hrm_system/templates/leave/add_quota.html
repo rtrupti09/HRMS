@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Add Leave Quota</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.employeeid.id_for_label }}" class="form-label">
+                                    <i class="bi bi-person"></i> Employee *
+                                </label>
+                                {{ form.employeeid }}
+                                {% if form.employeeid.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.employeeid.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.leave_type.id_for_label }}" class="form-label">
+                                    <i class="bi bi-tag"></i> Leave Type *
+                                </label>
+                                {{ form.leave_type }}
+                                {% if form.leave_type.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.leave_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.total_quota.id_for_label }}" class="form-label">
+                                    <i class="bi bi-calendar-check"></i> Total Quota *
+                                </label>
+                                {{ form.total_quota }}
+                                {% if form.total_quota.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.total_quota.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.year.id_for_label }}" class="form-label">
+                                    <i class="bi bi-calendar"></i> Year *
+                                </label>
+                                {{ form.year }}
+                                {% if form.year.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.year.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'leave_quota_dashboard' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-dark">
+                                <i class="bi bi-check-circle"></i> Add Quota
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
