@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-calendar-check"></i> Leave Dashboard</h2>
+                <a href="{% url 'apply_leave' %}" class="btn btn-dark">
+                    <i class="bi bi-plus-circle"></i> Apply Leave
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Balance Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Leave Balance ({{ current_year }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if leave_quotas %}
+                        <div class="row">
+                            {% for quota in leave_quotas %}
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title text-muted">{{ quota.get_leave_type_display }}</h6>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-success"><strong>{{ quota.remain_quota }}</strong></span>
+                                            <span class="text-muted">/ {{ quota.total_quota }}</span>
+                                        </div>
+                                        <small class="text-muted">Remaining</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-info-circle text-info" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2">No leave quota found for {{ current_year }}.</p>
+                            <p class="text-muted">You can still apply for leave. HR will review your application.</p>
+                            <a href="{% url 'apply_leave' %}" class="btn btn-dark">
+                                <i class="bi bi-plus-circle"></i> Apply Leave
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave History Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Leave History</h5>
+                </div>
+                <div class="card-body">
+                    {% if page_obj %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Leave Type</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Days</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th>Applied On</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for leave in page_obj %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ leave.get_leave_type_display }}</span>
+                                        </td>
+                                        <td>{{ leave.start_date|date:"M d, Y" }}</td>
+                                        <td>{{ leave.end_date|date:"M d, Y" }}</td>
+                                        <td>{{ leave.total_days }}</td>
+                                        <td>
+                                            <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ leave.reason }}">
+                                                {{ leave.reason }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if leave.status == 'pending' %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% elif leave.status == 'approved' %}
+                                                <span class="badge bg-success">Approved</span>
+                                            {% elif leave.status == 'rejected' %}
+                                                <span class="badge bg-danger">Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ leave.created_at|date:"M d, Y" }}</td>
+                                        <td>
+                                            {% if leave.status == 'pending' %}
+                                                <a href="{% url 'edit_leave' leave.leaveid %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-pencil"></i> Edit
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">No actions</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if page_obj.has_other_pages %}
+                        <nav aria-label="Leave history pagination">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                    </li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-calendar-x text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2">No leave applications found.</p>
+                            <a href="{% url 'apply_leave' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Apply Your First Leave
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

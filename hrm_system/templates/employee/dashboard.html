@@ -3,122 +3,938 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
 {% endblock %}
 {% block content %}
-<div class="container py-5">
-  <div class="d-flex align-items-center justify-content-between mb-4">
-    <div class="d-flex align-items-center">
-      <h2 class="me-2 text-dark fw-bold">👤 Employee Dashboard</h2>
-      <span class="fs-2"></span>
-    </div>
-    <div>
-      {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'add_employee' %}" class="btn btn-dark shadow-sm me-2" style="border-radius: 30px">
-          <i class="bi bi-plus-circle"></i> Add Employee
-        </a>
-        <a href="{% url 'department_dashboard' %}" class="btn btn-outline-dark shadow-sm me-2" style="border-radius: 30px">
-          <i class="bi bi-building"></i> Departments
-        </a>
-        <a href="{% url 'role_dashboard' %}" class="btn btn-outline-dark shadow-sm me-2" style="border-radius: 30px">
-          <i class="bi bi-person-badge"></i> Roles
-        </a>
-      {% endif %}
-      <a href="{% url 'custom_logout' %}" class="btn btn-outline-dark shadow-sm" style="border-radius: 30px">
-        <i class="bi bi-box-arrow-right"></i> Logout
-      </a>
-    </div>
+<!-- Header -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex align-items-center">
+    <h2 class="me-2 text-dark fw-bold">Employee Dashboard</h2>
+    <span class="fs-2">👤</span>
   </div>
   
-  {% if user.is_authenticated and user.is_superuser %}
-    <!-- Admin view - show all employees -->
-    <form method="get" class="input-group mb-4 shadow-sm" style="max-width: 500px">
-      <input type="text" name="search" value="{{ search }}" class="form-control px-4 py-2 border-end-0" placeholder="Search by name, username..." style="font-size: 1rem"/>
-      <button class="btn btn-dark border-start-0" type="submit">
-        <i class="bi bi-search fs-5"></i>
-      </button>
-    </form>
-    <div class="table-responsive rounded shadow-sm">
-      <table class="table table-bordered table-hover align-middle mb-0" style="background-color: #ffffff">
-        <thead class="table-light">
-          <tr class="text-center">
-            <th>#</th>
-            <th><i class="bi bi-person"></i> Name</th>
-            <th><i class="bi bi-person-badge"></i> Username</th>
-            <th><i class="bi bi-envelope"></i> Email</th>
-            <th><i class="bi bi-phone"></i> Mobile</th>
-            <th><i class="bi bi-building"></i> Department</th>
-            <th><i class="bi bi-person-vcard"></i> Role</th>
-            <th><i class="bi bi-person-lines-fill"></i> Reporting Manager</th>
-            <th><i class="bi bi-calendar-check"></i> Date of Joining</th>
-            <th><i class="bi bi-gear"></i> Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for employee in employees %}
-          <tr class="text-center">
-            <td>{{ forloop.counter }}</td>
-            <td class="fw-semibold text-capitalize text-dark">{{ employee.first_name }} {{ employee.last_name }}</td>
-            <td>{{ employee.username }}</td>
-            <td>{{ employee.email }}</td>
-            <td>{{ employee.mobile }}</td>
-            <td>{{ employee.dept }}</td>
-            <td>{{ employee.role }}</td>
-            <td>{% if employee.reporting_manager %}{{ employee.reporting_manager.first_name }} {{ employee.reporting_manager.last_name }}{% endif %}</td>
-            <td>{{ employee.date_of_joining }}</td>
-            <td>
-              <a href="{% url 'edit_employee' employee.employee_id %}" class="btn btn-sm btn-outline-dark rounded-pill me-1">
+  <div class="d-flex gap-2">
+    {% if user.is_authenticated and user.is_superuser %}
+      <a href="{% url 'add_employee' %}" class="btn btn-dark shadow-sm" style="border-radius: 30px">
+        <i class="bi bi-plus-circle"></i> Add Employee
+      </a>
+      <a href="{% url 'department_dashboard' %}" class="btn btn-dark shadow-sm" style="border-radius: 30px">
+        <i class="bi bi-building"></i> Departments
+      </a>
+      <a href="{% url 'role_dashboard' %}" class="btn btn-dark shadow-sm" style="border-radius: 30px">
+        <i class="bi bi-person-badge"></i> Roles
+      </a>
+      <a href="{% url 'review_dashboard' %}" class="btn btn-dark shadow-sm" style="border-radius: 30px">
+        <i class="bi bi-star-fill"></i> Reviews
+      </a>
+      <a href="{% url 'create_review' %}" class="btn btn-dark shadow-sm" style="border-radius: 30px">
+        <i class="bi bi-plus-circle"></i> Add Review
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{% if user.is_authenticated and user.is_superuser %}
+  <!-- Admin view - show all employees -->
+  <form method="get" class="input-group mb-4 shadow-sm" style="max-width: 500px">
+    <input type="text" name="search" value="{{ search }}" class="form-control px-4 py-2 border-end-0" placeholder="Search by name, username..." style="font-size: 1rem"/>
+    <button class="btn btn-dark border-start-0" type="submit">
+      <i class="bi bi-search fs-5"></i>
+    </button>
+  </form>
+  
+  <div class="table-responsive rounded shadow-sm">
+    <table class="table table-bordered table-hover align-middle mb-0" style="background-color: #ffffff">
+      <thead class="table-dark">
+        <tr class="text-center">
+          <th>#</th>
+          <th><i class="bi bi-person"></i> Name</th>
+          <th><i class="bi bi-person-badge"></i> Username</th>
+          <th><i class="bi bi-envelope"></i> Email</th>
+          <th><i class="bi bi-phone"></i> Mobile</th>
+          <th><i class="bi bi-building"></i> Department</th>
+          <th><i class="bi bi-person-vcard"></i> Role</th>
+          <th><i class="bi bi-person-lines-fill"></i> Reporting Manager</th>
+          <th><i class="bi bi-calendar-check"></i> Date of Joining</th>
+          <th><i class="bi bi-gear"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in employees %}
+        <tr class="text-center">
+          <td class="align-middle">{{ forloop.counter }}</td>
+          <td class="fw-semibold text-capitalize text-dark align-middle">{{ employee.first_name }} {{ employee.last_name }}</td>
+          <td class="align-middle">{{ employee.username }}</td>
+          <td class="align-middle">{{ employee.email }}</td>
+          <td class="align-middle">{{ employee.mobile }}</td>
+          <td class="align-middle">{{ employee.dept }}</td>
+          <td class="align-middle">{{ employee.role }}</td>
+          <td class="align-middle">{% if employee.reporting_manager %}{{ employee.reporting_manager.first_name }} {{ employee.reporting_manager.last_name }}{% endif %}</td>
+          <td class="align-middle">{{ employee.date_of_joining }}</td>
+          <td class="align-middle">
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-1">
+              <a href="{% url 'edit_employee' employee.employee_id %}" class="btn btn-sm btn-outline-dark rounded-pill">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <a href="{% url 'delete_employee' employee.employee_id %}" class="btn btn-sm btn-outline-danger rounded-pill">
                 <i class="bi bi-trash"></i>
               </a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="10" class="text-center text-muted py-4">
-              😕 No employees found.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <!-- Employee view - show only current employee info -->
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card shadow">
-          <div class="card-header bg-success text-white text-center">
-            <h4><i class="bi bi-person-circle"></i> My Profile</h4>
-          </div>
-          <div class="card-body">
-            {% if current_employee %}
-            <div class="row">
-              <div class="col-md-6">
-                <p><strong>Name:</strong> {{ current_employee.first_name }} {{ current_employee.last_name }}</p>
-                <p><strong>Username:</strong> {{ current_employee.username }}</p>
-                <p><strong>Email:</strong> {{ current_employee.email }}</p>
-                <p><strong>Mobile:</strong> {{ current_employee.mobile }}</p>
-              </div>
-              <div class="col-md-6">
-                <p><strong>Department:</strong> {{ current_employee.dept|default:"Not assigned" }}</p>
-                <p><strong>Role:</strong> {{ current_employee.role|default:"Not assigned" }}</p>
-                <p><strong>Date of Joining:</strong> {{ current_employee.date_of_joining }}</p>
-                <p><strong>Reporting Manager:</strong> 
-                  {% if current_employee.reporting_manager %}
-                    {{ current_employee.reporting_manager.first_name }} {{ current_employee.reporting_manager.last_name }}
-                  {% else %}
-                    Not assigned
-                  {% endif %}
-                </p>
-              </div>
             </div>
-            {% else %}
-            <p class="text-center text-muted">Employee information not found.</p>
-            {% endif %}
-          </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="10" class="text-center text-muted py-4">😕 No employees found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Review Statistics for Admin
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <div class="card bg-primary text-white text-center">
+        <div class="card-body">
+          <i class="bi bi-star-fill fs-1"></i>
+          <h5 class="card-title mt-2">Total Reviews</h5>
+          <p class="card-text fs-4">0</p>
         </div>
       </div>
     </div>
+    <div class="col-md-3">
+      <div class="card bg-success text-white text-center">
+        <div class="card-body">
+          <i class="bi bi-people-fill fs-1"></i>
+          <h5 class="card-title mt-2">Employees Reviewed</h5>
+          <p class="card-text fs-4">0</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-warning text-white text-center">
+        <div class="card-body">
+          <i class="bi bi-graph-up fs-1"></i>
+          <h5 class="card-title mt-2">Average Rating</h5>
+          <p class="card-text fs-4">0.0</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-info text-white text-center">
+        <div class="card-body">
+          <i class="bi bi-calendar-check fs-1"></i>
+          <h5 class="card-title mt-2">This Month</h5>
+          <p class="card-text fs-4">0</p>
+        </div>
+      </div>
+    </div>
+  </div> -->
+{% else %}
+  <!-- Employee view with navigation tabs -->
+  {% if current_employee %}
+    <!-- Employee Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="employeeTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">
+          <i class="bi bi-person-circle"></i> My Profile
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab" aria-controls="tasks" aria-selected="false">
+          <i class="bi bi-list-task"></i> My Tasks
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="leaves-tab" data-bs-toggle="tab" data-bs-target="#leaves" type="button" role="tab" aria-controls="leaves" aria-selected="false">
+          <i class="bi bi-calendar-check"></i> My Leaves
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">
+          <i class="bi bi-star-fill"></i> My Reviews
+        </button>
+      </li>
+      {% if user.is_superuser or current_employee.role.role_name.lower in 'manager,team leader,hr' %}
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="approve-leaves-tab" data-bs-toggle="tab" data-bs-target="#approve-leaves" type="button" role="tab" aria-controls="approve-leaves" aria-selected="false">
+          <i class="bi bi-shield-check"></i> Approve Leaves
+        </button>
+      </li>
+      {% endif %}
+      {% if user.is_superuser or current_employee.role.role_name.lower == 'hr' %}
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="leave-quotas-tab" data-bs-toggle="tab" data-bs-target="#leave-quotas" type="button" role="tab" aria-controls="leave-quotas" aria-selected="false">
+          <i class="bi bi-pie-chart"></i> Leave Quotas
+        </button>
+      </li>
+      {% endif %}
+      <li class="nav-item ms-auto" role="presentation">
+        <a class="nav-link text-danger" href="{% url 'custom_logout' %}">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="employeeTabContent">
+      <!-- Profile Tab -->
+      <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="card shadow border-0 rounded-4 mb-4">
+          <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-person-circle"></i> My Profile</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-person me-2"></i>Name</label>
+                  <p class="text-muted mb-0">{{ current_employee.first_name }} {{ current_employee.last_name }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-person-badge me-2"></i>Username</label>
+                  <p class="text-muted mb-0">{{ current_employee.username }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-envelope me-2"></i>Email</label>
+                  <p class="text-muted mb-0">{{ current_employee.email }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-phone me-2"></i>Mobile</label>
+                  <p class="text-muted mb-0">{{ current_employee.mobile }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-building me-2"></i>Department</label>
+                  <p class="text-muted mb-0">{{ current_employee.dept|default:"Not assigned" }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-person-vcard me-2"></i>Role</label>
+                  <p class="text-muted mb-0">{{ current_employee.role|default:"Not assigned" }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-calendar-check me-2"></i>Date of Joining</label>
+                  <p class="text-muted mb-0">{{ current_employee.date_of_joining }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark"><i class="bi bi-person-lines-fill me-2"></i>Reporting Manager</label>
+                  <p class="text-muted mb-0">
+                    {% if current_employee.reporting_manager %}
+                      {{ current_employee.reporting_manager.first_name }} {{ current_employee.reporting_manager.last_name }}
+                    {% else %}
+                      Not assigned
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks Tab -->
+      <div class="tab-pane fade" id="tasks" role="tabpanel" aria-labelledby="tasks-tab">
+        <div class="card shadow border-0 rounded-4 mb-4">
+          <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-list-task"></i> My Tasks</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Task Title</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for assignment in current_employee.task_assignments.all %}
+                  <tr>
+                    <td>
+                      <strong>{{ assignment.task.task_title }}</strong>
+                      <br>
+                      <small class="text-muted">{{ assignment.task.task_description|truncatechars:50 }}</small>
+                    </td>
+                    <td>
+                      <span class="badge bg-{% if assignment.task.task_priority == 'High' %}danger{% elif assignment.task.task_priority == 'Medium' %}warning{% else %}success{% endif %}">
+                        {{ assignment.task.task_priority }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge bg-{% if assignment.status == 'Completed' %}success{% elif assignment.status == 'In Progress' %}warning{% else %}secondary{% endif %}">
+                        {{ assignment.status }}
+                      </span>
+                    </td>
+                    <td>{{ assignment.task.end_date|date:"M d, Y" }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-dark" onclick="toggleTaskDetails('task-{{ assignment.assignment_id }}')">
+                        <i class="bi bi-eye"></i> Details
+                      </button>
+                    </td>
+                  </tr>
+                  <!-- Task Details Row -->
+                  <tr id="task-{{ assignment.assignment_id }}" class="task-details-row" style="display: none;">
+                    <td colspan="5">
+                      <div class="card bg-light">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <h6 class="text-dark fw-bold">Task Information</h6>
+                              <p><strong>Title:</strong> {{ assignment.task.task_title }}</p>
+                              <p><strong>Description:</strong> {{ assignment.task.task_description }}</p>
+                              <p><strong>Type:</strong> {{ assignment.task.task_type }}</p>
+                              <p><strong>Start Date:</strong> {{ assignment.task.start_date|date:"M d, Y" }}</p>
+                              <p><strong>End Date:</strong> {{ assignment.task.end_date|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                              <h6 class="text-dark fw-bold">Assignment Information</h6>
+                              <p><strong>Status:</strong> 
+                                <span class="badge bg-{% if assignment.status == 'Completed' %}success{% elif assignment.status == 'In Progress' %}warning{% else %}secondary{% endif %}">
+                                  {{ assignment.status }}
+                                </span>
+                              </p>
+                              <p><strong>Assigned Date:</strong> {{ assignment.assigned_date|date:"M d, Y H:i" }}</p>
+                              <p><strong>Assigned By:</strong> {{ assignment.assigned_by.first_name }} {{ assignment.assigned_by.last_name }}</p>
+                              {% if assignment.completed_at %}
+                              <p><strong>Completed At:</strong> {{ assignment.completed_at|date:"M d, Y H:i" }}</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center py-4">
+                      <div class="text-muted">
+                        <i class="bi bi-inbox display-4"></i>
+                        <p class="mt-2">No tasks assigned to you yet.</p>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+        <div class="card shadow border-0 rounded-4 mb-4">
+          <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-star-fill"></i> My Performance Reviews</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Review Title</th>
+                    <th>Review Date</th>
+                    <th>Period</th>
+                    <th>Rating</th>
+                    <th>Reviewed By</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for review in current_employee.reviews_received.all %}
+                  <tr>
+                    <td>
+                      <strong>{{ review.review_title }}</strong>
+                      <br>
+                      <small class="text-muted">{{ review.comments|truncatechars:50 }}</small>
+                    </td>
+                    <td>{{ review.review_date|date:"M d, Y" }}</td>
+                    <td>
+                      <span class="badge bg-{% if review.review_period == 'Monthly' %}primary{% elif review.review_period == 'Quarterly' %}warning{% else %}success{% endif %}">
+                        {{ review.review_period }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="stars me-2">
+                          {% for i in "12345678910" %}
+                            {% if forloop.counter <= review.rating %}
+                              <i class="bi bi-star-fill text-warning"></i>
+                            {% else %}
+                              <i class="bi bi-star text-muted"></i>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                        <span class="badge bg-primary">{{ review.rating }}/10</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-sm bg-dark rounded-circle d-flex align-items-center justify-content-center me-2">
+                          <span class="text-white fw-bold">{{ review.reviewed_by.first_name|first }}{{ review.reviewed_by.last_name|first }}</span>
+                        </div>
+                        <div>
+                          <strong>{{ review.reviewed_by.first_name }} {{ review.reviewed_by.last_name }}</strong>
+                          <br>
+                          <small class="text-muted">{{ review.reviewed_by.role.role_name|default:"No Role" }}</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-dark" onclick="toggleReviewDetails('review-{{ review.review_id }}')">
+                        <i class="bi bi-eye"></i> Details
+                      </button>
+                    </td>
+                  </tr>
+                  <!-- Review Details Row -->
+                  <tr id="review-{{ review.review_id }}" class="review-details-row" style="display: none;">
+                    <td colspan="6">
+                      <div class="card bg-light">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <h6 class="text-dark fw-bold">Review Information</h6>
+                              <p><strong>Title:</strong> {{ review.review_title }}</p>
+                              <p><strong>Date:</strong> {{ review.review_date|date:"F d, Y" }}</p>
+                              <p><strong>Period:</strong> 
+                                <span class="badge bg-{% if review.review_period == 'Monthly' %}primary{% elif review.review_period == 'Quarterly' %}warning{% else %}success{% endif %}">
+                                  {{ review.review_period }}
+                                </span>
+                              </p>
+                              <p><strong>Rating:</strong> 
+                                <div class="d-flex align-items-center">
+                                  <div class="stars me-2">
+                                    {% for i in "12345678910" %}
+                                      {% if forloop.counter <= review.rating %}
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                      {% else %}
+                                        <i class="bi bi-star text-muted"></i>
+                                      {% endif %}
+                                    {% endfor %}
+                                  </div>
+                                  <span class="badge bg-primary">{{ review.rating }}/10</span>
+                                </div>
+                              </p>
+                            </div>
+                            <div class="col-md-6">
+                              <h6 class="text-dark fw-bold">Reviewer Information</h6>
+                              <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-lg bg-dark rounded-circle d-flex align-items-center justify-content-center me-3">
+                                  <span class="text-white fw-bold fs-4">{{ review.reviewed_by.first_name|first }}{{ review.reviewed_by.last_name|first }}</span>
+                                </div>
+                                <div>
+                                  <h6 class="mb-1">{{ review.reviewed_by.first_name }} {{ review.reviewed_by.last_name }}</h6>
+                                  <small class="text-muted">{{ review.reviewed_by.role.role_name|default:"No Role" }}</small>
+                                </div>
+                              </div>
+                              <p><strong>Department:</strong> {{ review.reviewed_by.dept.dept_name|default:"Not Assigned" }}</p>
+                              <p><strong>Review Created:</strong> {{ review.created_at|date:"M d, Y H:i" }}</p>
+                              <p><strong>Last Updated:</strong> {{ review.updated_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                          </div>
+                          <div class="row mt-3">
+                            <div class="col-12">
+                              <h6 class="text-dark fw-bold">Comments</h6>
+                              <div class="card bg-white">
+                                <div class="card-body">
+                                  <p class="mb-0">{{ review.comments|linebreaks }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <div class="text-muted">
+                        <i class="bi bi-inbox display-4"></i>
+                        <p class="mt-2">No performance reviews found for you yet.</p>
+                        <p class="small">Your manager will create reviews for you periodically.</p>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaves Tab -->
+      <div class="tab-pane fade" id="leaves" role="tabpanel" aria-labelledby="leaves-tab">
+        <div class="card shadow border-0 rounded-4 mb-4">
+          <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-calendar-check"></i> My Leave Management</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h5 class="mb-0">Leave Dashboard</h5>
+              <a href="{% url 'apply_leave' %}" class="btn btn-dark">
+                <i class="bi bi-plus-circle"></i> Apply Leave
+              </a>
+            </div>
+
+            <!-- Leave Balance Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="card bg-light">
+                  <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0"><i class="bi bi-pie-chart"></i> Leave Balance ({{ current_year|default:2024 }})</h6>
+                  </div>
+                  <div class="card-body">
+                    {% with leave_quotas=current_employee.leave_quotas.all %}
+                      {% if leave_quotas %}
+                        <div class="row">
+                          {% for quota in leave_quotas %}
+                          <div class="col-md-3 mb-3">
+                            <div class="card border-0 bg-white">
+                              <div class="card-body text-center">
+                                <h6 class="card-title text-muted">{{ quota.get_leave_type_display }}</h6>
+                                <div class="d-flex justify-content-between">
+                                  <span class="text-success"><strong>{{ quota.remain_quota }}</strong></span>
+                                  <span class="text-muted">/ {{ quota.total_quota }}</span>
+                                </div>
+                                <small class="text-muted">Remaining</small>
+                              </div>
+                            </div>
+                          </div>
+                          {% endfor %}
+                        </div>
+                      {% else %}
+                        <div class="text-center py-3">
+                          <i class="bi bi-info-circle text-info" style="font-size: 1.5rem;"></i>
+                          <p class="text-muted mt-2 mb-0">No leave quota found for {{ current_year|default:2024 }}.</p>
+                          <p class="text-muted small">You can still apply for leave. HR will review your application.</p>
+                        </div>
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Leave History Section -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card bg-light">
+                  <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> Leave History</h6>
+                  </div>
+                  <div class="card-body">
+                    {% with leaves=current_employee.leaves.all %}
+                      {% if leaves %}
+                        <div class="table-responsive">
+                          <table class="table table-hover">
+                            <thead class="table-light">
+                              <tr>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Days</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Applied On</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for leave in leaves|slice:":5" %}
+                              <tr>
+                                <td>
+                                  <span class="badge bg-secondary">{{ leave.get_leave_type_display }}</span>
+                                </td>
+                                <td>{{ leave.start_date|date:"M d, Y" }}</td>
+                                <td>{{ leave.end_date|date:"M d, Y" }}</td>
+                                <td>{{ leave.total_days }}</td>
+                                <td>
+                                  <span class="text-truncate d-inline-block" style="max-width: 100px;" title="{{ leave.reason }}">
+                                    {{ leave.reason }}
+                                  </span>
+                                </td>
+                                <td>
+                                  {% if leave.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                  {% elif leave.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                  {% elif leave.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                  {% endif %}
+                                </td>
+                                <td>{{ leave.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                  {% if leave.status == 'pending' %}
+                                    <a href="{% url 'edit_leave' leave.leaveid %}" class="btn btn-sm btn-outline-primary">
+                                      <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                  {% else %}
+                                    <span class="text-muted">No actions</span>
+                                  {% endif %}
+                                </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                        {% if leaves.count > 5 %}
+                          <div class="text-center mt-3">
+                            <small class="text-muted">Showing first 5 applications. Total: {{ leaves.count }}</small>
+                          </div>
+                        {% endif %}
+                      {% else %}
+                        <div class="text-center py-3">
+                          <i class="bi bi-calendar-x text-muted" style="font-size: 1.5rem;"></i>
+                          <p class="text-muted mt-2 mb-0">No leave applications found.</p>
+                          <a href="{% url 'apply_leave' %}" class="btn btn-primary btn-sm mt-2">
+                            <i class="bi bi-plus-circle"></i> Apply Your First Leave
+                          </a>
+                        </div>
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approve Leaves Tab (for Managers/HR) -->
+      {% if user.is_superuser or current_employee.role.role_name.lower in 'manager,team leader,hr' %}
+      <div class="tab-pane fade" id="approve-leaves" role="tabpanel" aria-labelledby="approve-leaves-tab">
+        <div class="card shadow border-0 rounded-4 mb-4">
+          <div class="card-header bg-warning text-dark text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-shield-check"></i> Leave Approval Dashboard</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h5 class="mb-0">Pending Leave Applications</h5>
+              <a href="{% url 'admin_leave_dashboard' %}" class="btn btn-warning">
+                <i class="bi bi-arrow-right"></i> View All
+              </a>
+            </div>
+
+            <!-- Pending Leaves Section -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card bg-light">
+                  <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="bi bi-clock"></i> Pending Applications</h6>
+                  </div>
+                  <div class="card-body">
+                    {% if user.is_superuser %}
+                      {% with pending_leaves=current_employee.approved_leaves.all %}
+                        {% if pending_leaves %}
+                          <div class="table-responsive">
+                            <table class="table table-hover">
+                              <thead class="table-light">
+                                <tr>
+                                  <th>Employee</th>
+                                  <th>Leave Type</th>
+                                  <th>From</th>
+                                  <th>To</th>
+                                  <th>Days</th>
+                                  <th>Status</th>
+                                  <th>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for leave in pending_leaves|slice:":5" %}
+                                <tr>
+                                  <td>
+                                    <strong>{{ leave.employeeid.first_name }} {{ leave.employeeid.last_name }}</strong>
+                                  </td>
+                                  <td>
+                                    <span class="badge bg-secondary">{{ leave.get_leave_type_display }}</span>
+                                  </td>
+                                  <td>{{ leave.start_date|date:"M d, Y" }}</td>
+                                  <td>{{ leave.end_date|date:"M d, Y" }}</td>
+                                  <td>{{ leave.total_days }}</td>
+                                  <td>
+                                    <span class="badge bg-warning">Pending</span>
+                                  </td>
+                                  <td>
+                                    <a href="{% url 'approve_leave' leave.leaveid %}" class="btn btn-sm btn-outline-primary">
+                                      <i class="bi bi-check-circle"></i> Review
+                                    </a>
+                                  </td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        {% else %}
+                          <div class="text-center py-3">
+                            <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
+                            <p class="text-muted mt-2 mb-0">No pending leave applications.</p>
+                          </div>
+                        {% endif %}
+                      {% endwith %}
+                    {% else %}
+                      <div class="text-center py-3">
+                        <i class="bi bi-info-circle text-info" style="font-size: 1.5rem;"></i>
+                        <p class="text-muted mt-2 mb-0">Access the full leave approval dashboard to manage team leave applications.</p>
+                        <a href="{% url 'admin_leave_dashboard' %}" class="btn btn-primary btn-sm mt-2">
+                          <i class="bi bi-arrow-right"></i> Go to Approval Dashboard
+                        </a>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Leave Quotas Tab (for HR) -->
+      {% if user.is_superuser or current_employee.role.role_name.lower == 'hr' %}
+      <div class="tab-pane fade" id="leave-quotas" role="tabpanel" aria-labelledby="leave-quotas-tab">
+        <div class="card shadow border-0 rounded-4 mb-4">
+          <div class="card-header bg-info text-white text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-pie-chart"></i> Leave Quota Management</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h5 class="mb-0">Employee Leave Quotas</h5>
+              <div>
+                <a href="{% url 'add_leave_quota' %}" class="btn btn-success">
+                  <i class="bi bi-plus-circle"></i> Add Quota
+                </a>
+                <a href="{% url 'leave_quota_dashboard' %}" class="btn btn-info">
+                  <i class="bi bi-arrow-right"></i> View All
+                </a>
+              </div>
+            </div>
+
+            <!-- Quota Management Section -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card bg-light">
+                  <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-list-ul"></i> Recent Quotas</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="text-center py-3">
+                      <i class="bi bi-info-circle text-info" style="font-size: 1.5rem;"></i>
+                      <p class="text-muted mt-2 mb-0">Access the full leave quota management dashboard to manage all employee quotas.</p>
+                      <a href="{% url 'leave_quota_dashboard' %}" class="btn btn-primary btn-sm mt-2">
+                        <i class="bi bi-arrow-right"></i> Go to Quota Dashboard
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="text-center py-4">
+      <i class="bi bi-exclamation-circle text-muted" style="font-size: 3rem;"></i>
+      <p class="text-muted mt-3">Employee information not found.</p>
+    </div>
   {% endif %}
-</div>
+{% endif %}
+
+<style>
+.nav-tabs {
+  border: none;
+  background: rgba(25, 25, 26, 0.95);
+  border-radius: 15px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nav-tabs .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 10px;
+  margin: 0 0.25rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* .nav-tabs .nav-link.active {
+  color: white;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  transform: translateY(-2px);
+} */
+
+.card {
+  border-radius: 15px;
+}
+
+.btn {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tab-content {
+  transition: opacity 0.3s ease;
+}
+
+.tab-pane {
+  transition: opacity 0.3s ease;
+}
+
+.tab-pane.fade {
+  opacity: 0;
+}
+
+.tab-pane.fade.show {
+  opacity: 1;
+}
+
+.avatar-sm {
+  width: 35px;
+  height: 35px;
+  font-size: 12px;
+}
+
+.stars {
+  font-size: 12px;
+}
+
+.table th {
+  border-top: none;
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+.avatar-lg {
+  width: 60px;
+  height: 60px;
+  font-size: 18px;
+}
+
+.task-details-row, .review-details-row {
+  background-color: #f8f9fa;
+}
+
+.task-details-row .card, .review-details-row .card {
+  border: none;
+  box-shadow: none;
+}
+
+.fs-4 {
+  font-size: 1.5rem !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Add smooth transitions to tab switching
+  const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // Remove active class from all tabs
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      // Add active class to clicked tab
+      this.classList.add('active');
+      
+      // Add a subtle animation to the tab content
+      const targetId = this.getAttribute('data-bs-target');
+      const targetContent = document.querySelector(targetId);
+      
+      if (targetContent) {
+        targetContent.style.opacity = '0';
+        setTimeout(() => {
+          targetContent.style.opacity = '1';
+        }, 150);
+      }
+    });
+  });
+  
+  // Add hover effects to cards
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-5px)';
+      this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+    });
+  });
+});
+
+// Function to toggle task details
+function toggleTaskDetails(taskId) {
+  const detailsRow = document.getElementById(taskId);
+  const button = event.target.closest('button');
+  
+  if (detailsRow.style.display === 'none') {
+    // Hide all other task details first
+    document.querySelectorAll('.task-details-row').forEach(row => {
+      row.style.display = 'none';
+    });
+    // Show this task's details
+    detailsRow.style.display = 'table-row';
+    button.innerHTML = '<i class="bi bi-eye-slash"></i> Hide';
+    button.classList.remove('btn-outline-dark');
+    button.classList.add('btn-dark');
+  } else {
+    // Hide this task's details
+    detailsRow.style.display = 'none';
+    button.innerHTML = '<i class="bi bi-eye"></i> Details';
+    button.classList.remove('btn-dark');
+    button.classList.add('btn-outline-dark');
+  }
+}
+
+// Function to toggle review details
+function toggleReviewDetails(reviewId) {
+  const detailsRow = document.getElementById(reviewId);
+  const button = event.target.closest('button');
+  
+  if (detailsRow.style.display === 'none') {
+    // Hide all other review details first
+    document.querySelectorAll('.review-details-row').forEach(row => {
+      row.style.display = 'none';
+    });
+    // Show this review's details
+    detailsRow.style.display = 'table-row';
+    button.innerHTML = '<i class="bi bi-eye-slash"></i> Hide';
+    button.classList.remove('btn-outline-dark');
+    button.classList.add('btn-dark');
+  } else {
+    // Hide this review's details
+    detailsRow.style.display = 'none';
+    button.innerHTML = '<i class="bi bi-eye"></i> Details';
+    button.classList.remove('btn-dark');
+    button.classList.add('btn-outline-dark');
+  }
+}
+</script>
 {% endblock %} 

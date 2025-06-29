@@ -14,21 +14,26 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-      html,
-      body {
+      html {
         height: 100%;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background-attachment: fixed; /* ensures it stays in place while scrolling */
+        background-repeat: no-repeat;
+        background-size: cover;
       }
 
       body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        background: transparent; /* Let html background show through */
       }
 
       body > .container {
         flex: 1 0 auto;
       }
+
 
       .hrm-header {
         background: #19191a;
@@ -36,7 +41,8 @@
         padding: 1.2rem 0 1rem 0;
         border-radius: 0 0 24px 24px;
         box-shadow: 0 2px 8px rgba(75, 0, 130, 0.08);
-        margin-bottom: 2rem;
+      
+
       }
 
       .hrm-footer {
@@ -48,6 +54,54 @@
         font-size: 1rem;
         flex-shrink: 0;
       }
+
+      .nav-tabs {
+        border: none;
+        background: rgba(25, 25, 26, 0.95);
+        border-radius: 15px;
+        padding: 0.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-tabs .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 10px;
+        margin: 0 0.25rem;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: transparent;
+      }
+
+      .nav-tabs .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      /* .nav-tabs .nav-link.active {
+        color: white;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        transform: translateY(-2px);
+      } */
+
+      .nav-tabs .nav-link.text-danger {
+        color: #ff6b6b !important;
+      }
+
+      .nav-tabs .nav-link.text-danger:hover {
+        background: rgba(255, 107, 107, 0.2);
+        color: #ff5252 !important;
+      }
+
+      .nav-tabs .nav-link.text-danger.active {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+      }
     </style>
 
     {% block extra_head %}{% endblock %}
@@ -57,8 +111,80 @@
       <h1 style="font-weight: bold; letter-spacing: 1px">
         <i class="bi bi-people-fill"></i> HRM System
       </h1>
-      <p class="mb-0">🌟Manage your departments with style and ease! 🚀</p>
+      <p class="mb-0">🌟Manage your departments and tasks with style and ease! 🚀</p>
     </div>
+
+    <!-- Navigation -->
+    {% if user.is_authenticated or request.session.employee_id %}
+    {% if request.resolver_match.url_name != 'admin_login' and request.resolver_match.url_name != 'employee_login' and request.resolver_match.url_name != 'employee_signup' and request.resolver_match.url_name != 'password_reset_request' and request.resolver_match.url_name != 'password_reset_otp' and request.resolver_match.url_name != 'password_reset_new' and request.resolver_match.url_name != 'employee_dashboard' %}
+    <div class="container mt-5">
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'department_dashboard' %}active{% endif %}" href="{% url 'department_dashboard' %}">
+            <i class="bi bi-building"></i> Departments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'role_dashboard' %}active{% endif %}" href="{% url 'role_dashboard' %}">
+            <i class="bi bi-person-badge"></i> Roles
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'employee_dashboard' %}active{% endif %}" href="{% url 'employee_dashboard' %}">
+            <i class="bi bi-people"></i> Employees
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'task' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'task_dashboard' %}">
+            <i class="bi bi-list-task"></i> Tasks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'review' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'review_dashboard' %}">
+            <i class="bi bi-star-fill"></i> Reviews
+          </a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link {% if 'leave' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'employee_leave_dashboard' %}">
+            <i class="bi bi-calendar-check"></i> Leaves
+          </a>
+        </li> -->
+        {% if user.is_superuser %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'admin_leave_dashboard' %}active{% endif %}" href="{% url 'admin_leave_dashboard' %}">
+            <i class="bi bi-shield-check"></i> Approve Leaves
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'leave_quota_dashboard' %}active{% endif %}" href="{% url 'leave_quota_dashboard' %}">
+            <i class="bi bi-pie-chart"></i> Leave Quotas
+          </a>
+        </li>
+        {% endif %}
+        {% if user.is_superuser %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'manager_review_dashboard' %}active{% endif %}" href="{% url 'manager_review_dashboard' %}">
+            <i class="bi bi-person-check-fill"></i> Team Reviews
+          </a>
+        </li>
+        {% endif %}
+        {% if not user.is_superuser and request.session.employee_id %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'employee_task_dashboard' %}active{% endif %}" href="{% url 'employee_task_dashboard' %}">
+            <i class="bi bi-person-check"></i> My Tasks
+          </a>
+        </li>
+        {% endif %}
+        <li class="nav-item ms-auto">
+          <a class="nav-link text-danger" href="{% url 'custom_logout' %}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+    {% endif %}
+    {% endif %}
+
     <div class="container pt-3">
       {% if messages %}
       <div>

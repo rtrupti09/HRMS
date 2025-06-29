@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-star-fill"></i> Performance Review Details
+                    </h4>
+                    <a href="{% url 'review_dashboard' %}" class="btn btn-light">
+                        <i class="bi bi-arrow-left"></i> Back to Reviews
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h5 class="text-primary">
+                                <i class="bi bi-pencil"></i> Review Information
+                            </h5>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Title:</strong></div>
+                                        <div class="col-8">{{ review.review_title }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Date:</strong></div>
+                                        <div class="col-8">{{ review.review_date|date:"F d, Y" }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Period:</strong></div>
+                                        <div class="col-8">
+                                            <span class="badge bg-{% if review.review_period == 'Monthly' %}primary{% elif review.review_period == 'Quarterly' %}warning{% else %}success{% endif %}">
+                                                {{ review.review_period }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Rating:</strong></div>
+                                        <div class="col-8">
+                                            <div class="d-flex align-items-center">
+                                                <div class="stars me-2">
+                                                    {% for i in "12345678910" %}
+                                                        {% if forloop.counter <= review.rating %}
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                        {% else %}
+                                                            <i class="bi bi-star text-muted"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <span class="badge bg-primary fs-6">{{ review.rating }}/10</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h5 class="text-primary">
+                                <i class="bi bi-person"></i> Employee Information
+                            </h5>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar-lg bg-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                            <span class="text-white fw-bold fs-4">{{ review.employee.first_name|first }}{{ review.employee.last_name|first }}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">{{ review.employee.first_name }} {{ review.employee.last_name }}</h6>
+                                            <small class="text-muted">{{ review.employee.email }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Department:</strong></div>
+                                        <div class="col-8">{{ review.employee.dept.dept_name|default:"Not Assigned" }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Role:</strong></div>
+                                        <div class="col-8">{{ review.employee.role.role_name|default:"Not Assigned" }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Joined:</strong></div>
+                                        <div class="col-8">{{ review.employee.date_of_joining|date:"M d, Y" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h5 class="text-primary">
+                                <i class="bi bi-person-check"></i> Reviewer Information
+                            </h5>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar-lg bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                            <span class="text-white fw-bold fs-4">{{ review.reviewed_by.first_name|first }}{{ review.reviewed_by.last_name|first }}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">{{ review.reviewed_by.first_name }} {{ review.reviewed_by.last_name }}</h6>
+                                            <small class="text-muted">{{ review.reviewed_by.role.role_name|default:"No Role" }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Department:</strong></div>
+                                        <div class="col-8">{{ review.reviewed_by.dept.dept_name|default:"Not Assigned" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h5 class="text-primary">
+                                <i class="bi bi-clock"></i> Review Timeline
+                            </h5>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Created:</strong></div>
+                                        <div class="col-8">{{ review.created_at|date:"M d, Y H:i" }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4"><strong>Updated:</strong></div>
+                                        <div class="col-8">{{ review.updated_at|date:"M d, Y H:i" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="text-primary">
+                        <i class="bi bi-chat-text"></i> Review Comments
+                    </h5>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <p class="mb-0">{{ review.comments|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'review_dashboard' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Reviews
+                    </a>
+                    {% if user.is_superuser %}
+                    <div>
+                        <a href="{% url 'edit_review' review.review_id %}" class="btn btn-warning me-2">
+                            <i class="bi bi-pencil"></i> Edit Review
+                        </a>
+                        <a href="{% url 'delete_review' review.review_id %}" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Delete Review
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-lg {
+    width: 60px;
+    height: 60px;
+    font-size: 18px;
+}
+
+.stars {
+    font-size: 16px;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.text-primary {
+    color: #007bff !important;
+}
+
+.badge {
+    font-size: 0.875rem;
+}
+
+.fs-4 {
+    font-size: 1.5rem !important;
+}
+
+.fs-6 {
+    font-size: 1rem !important;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="bi bi-check-circle"></i> Update Task Status</h5>
+        </div>
+        <div class="card-body">
+          <h6 class="mb-3">Task: {{ assignment.task.task_title }}</h6>
+          <p class="text-muted mb-4">Current Status: <span class="badge bg-secondary">{{ assignment.status }}</span></p>
+          
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="status" class="form-label fw-semibold">New Status</label>
+              <select name="status" id="status" class="form-control">
+                {% for value, label in status_choices %}
+                  <option value="{{ value }}" {% if value == assignment.status %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'task_detail' assignment.assignment_id %}" class="btn btn-outline-dark" style="border-radius: 30px">
+                <i class="bi bi-arrow-left"></i> Cancel
+              </a>
+              <button type="submit" class="btn btn-success" style="border-radius: 30px">
+                <i class="bi bi-check-circle"></i> Update Status
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
